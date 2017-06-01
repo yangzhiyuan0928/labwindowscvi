@@ -1,4 +1,4 @@
-## Terminal
+### Terminal
 一个基于Labwindows CVI平台编写的果蝇嗅觉/视觉实验控制系统上位机，下位机是STM32实验板
 
 # 功能
