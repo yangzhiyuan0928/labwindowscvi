@@ -1,5 +1,5 @@
 # TDLAS_TCP_SERVER
-一个基于Labwindows CVI平台编写的TDLAS气体检测系统数据采集上位机软件，下位机是Xilinx Zynq7020开发板
+一个基于Labwindows CVI平台编写的TDLAS气体检测系统数据采集上位机软件，下位机是Xilinx Zynq7020开发板，ADC选用AD7989，DAC选用LTC4624.
 
 ## 功能
 * DDS参数配置
