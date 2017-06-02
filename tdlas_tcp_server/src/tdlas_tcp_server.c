@@ -11,14 +11,14 @@
 #include <cvirte.h>	
 #include "TDLAS_TCP_SERVER.h"
 
-static int panelHandle; //主面板句柄
+static int panelHandle; 
 static int TabPanel_1;  //tabpanel handle
 static int TabPanel_2;
 static int TabPanel_3;
 
 #define SERVER_PORT_NUM    60100
-#define SERVER_PORT_CH1    60200   //接收通道1数据
-#define SERVER_PORT_CH2    60300   //接收通道2数据
+#define SERVER_PORT_CH1    60200   //
+#define SERVER_PORT_CH2    60300   //
 #define SERVER_IP         "223.3.40.114"
 
 //SYS control command list for TCP
@@ -29,7 +29,7 @@ static int TabPanel_3;
 #define TEC_OFF             0x15 
 #define LASER_ION           0x16
 #define LASER_IOFF          0x17
-#define SET_NOTICE          0x1A //制冷器温度设置、激光器电流设置超限提醒
+#define SET_NOTICE          0x1A //over T/I limit
 #define TEC_TSET            0x20
 #define LASER_ISET          0x21 //DDS Config
 #define AD_START            0x18 
@@ -41,7 +41,7 @@ static int TabPanel_3;
 #define CMD_CREATE(CMD_HEAD,HEAD_LEN,HEAD_CMD) ((CMD_HEAD & 0xffff) <<16) | ((HEAD_LEN & 0xff) << 8) | ( HEAD_CMD & 0xff)
 
 
-typedef struct DDS_Param //DDS 参数
+typedef struct DDS_Param //DDS parameter
 {
 	double  freq_sq1x;
 	double  phase_sq1x;
@@ -97,9 +97,9 @@ unsigned int SET_Notice = 0xA5A51C1A;  //接收命令
 unsigned int Get_ParamLimit = 0xA5A5041A; //获取阈值参数命令
 
 //TCP handle
-static unsigned int g_hconversation = 0;  //发送命令句柄，对应端口60100
-static unsigned int ch1_hconversation = 0; //通道1接收数据句柄，对应端口60200
-static unsigned int ch2_hconversation = 0; //通道2接收数据句柄，对应端口60300
+static unsigned int g_hconversation = 0;  //port: 60100
+static unsigned int ch1_hconversation = 0; //AD channel1: 60200
+static unsigned int ch2_hconversation = 0; //AD channel2: 60300
 static int          g_TCPError = 0;
 static int Server_registed = 0;
 
@@ -175,17 +175,17 @@ int main (int argc, char *argv[])
 	
 	//初始化Tab控件活动面板
 	SetActiveTabPage (panelHandle, PANEL_TAB, 0);  
-	GetPanelHandleFromTabPage (panelHandle, PANEL_TAB, 0, &TabPanel_1);  //获取TabHandle        
+	GetPanelHandleFromTabPage (panelHandle, PANEL_TAB, 0, &TabPanel_1);          
 	GetPanelHandleFromTabPage (panelHandle, PANEL_TAB, 1, &TabPanel_2);  
 	GetPanelHandleFromTabPage (panelHandle, PANEL_TAB, 2, &TabPanel_3); 
 	
 	//初始化各状态指示灯 
-	SetCtrlAttribute (panelHandle, PANEL_TCP_LED, ATTR_OFF_COLOR,VAL_RED); 		//TCP连接状态指示灯，在未连接的时候显示红色 
-	SetCtrlAttribute (panelHandle, PANEL_TCP_LED, ATTR_ON_COLOR,VAL_GREEN); 	//TCP连接状态指示灯，在连接的时候显示绿色    
-	SetCtrlAttribute (panelHandle, PANEL_CH1_LED, ATTR_OFF_COLOR,VAL_RED); 		//TCP连接状态指示灯，在未连接的时候显示红色 
-	SetCtrlAttribute (panelHandle, PANEL_CH1_LED, ATTR_ON_COLOR,VAL_GREEN); 	//TCP连接状态指示灯，在连接的时候显示绿色   
-	SetCtrlAttribute (panelHandle, PANEL_CH2_LED, ATTR_OFF_COLOR,VAL_RED); 		//TCP连接状态指示灯，在未连接的时候显示红色 
-	SetCtrlAttribute (panelHandle, PANEL_CH2_LED, ATTR_ON_COLOR,VAL_GREEN); 	//TCP连接状态指示灯，在连接的时候显示绿色   
+	SetCtrlAttribute (panelHandle, PANEL_TCP_LED, ATTR_OFF_COLOR,VAL_RED); 		
+	SetCtrlAttribute (panelHandle, PANEL_TCP_LED, ATTR_ON_COLOR,VAL_GREEN); 	    
+	SetCtrlAttribute (panelHandle, PANEL_CH1_LED, ATTR_OFF_COLOR,VAL_RED); 		 
+	SetCtrlAttribute (panelHandle, PANEL_CH1_LED, ATTR_ON_COLOR,VAL_GREEN); 	   
+	SetCtrlAttribute (panelHandle, PANEL_CH2_LED, ATTR_OFF_COLOR,VAL_RED); 		
+	SetCtrlAttribute (panelHandle, PANEL_CH2_LED, ATTR_ON_COLOR,VAL_GREEN); 	   
 	
 	ch1_buf1 = malloc(sizeof(int)*DATA_SIZE); //分配1024*4*1024Byte，约为4MByte
 	ch1_buf2 = malloc(sizeof(int)*DATA_SIZE);
@@ -221,7 +221,7 @@ DWORD WINAPI ThreadFunction1_ch1(LPVOID param)
 		ch1_ptr = ch1_buf1;  //数据块存放到ch1_buf
 		wordsToRead = messageSize;
 		while(ch1_hconversation == 0); //等待连接
-		while(wordsToRead > 0) //每次读取的数据量的大小是随机？还是与端口数据缓存区大小有关，这里写定每次读取1024个字的数据(PACKET_SIZE)
+		while(wordsToRead > 0)  //(PACKET_SIZE)
 		{
 			wordsRead = ServerTCPRead(ch1_hconversation,&ch1_ptr[messageSize - wordsToRead],PACKET_SIZE*sizeof(int),1000)/sizeof(int); //ServerTCPRead返回值是读取数据byte数
 			wordsToRead -= wordsRead;
@@ -692,10 +692,10 @@ int CVICALLBACK DDS_Config (int panel, int control, int event,
 int CVICALLBACK AD_Ctrl(int panel, int control, int event,
 	    void *callbackData, int eventData1, int eventData2)
 {
-	unsigned int AD_CH1_State = 0;  //对应2个开关
+	unsigned int AD_CH1_State = 0;  //
 	unsigned int AD_CH2_State = 0;
 	unsigned int AD_State = 0;
-	unsigned char channel_num = 0; //通道号
+	unsigned char channel_num = 0; //
 	unsigned int sendNum = 0;
 	
 	switch (event)
